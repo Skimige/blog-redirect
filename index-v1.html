@@ -1,0 +1,116 @@
+<html><head>
+  <title>Jianghao Ran</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+</head>
+<body>
+  <section id="body">
+    <h1><i class="fa fa-paper-plane fa-fw"></i> I've left.</h1>
+    <p>Put down something, to get a better tomorrow!</p>
+  </section>
+  <div class="footer">
+    <ul>
+      <li>© Jianghao Ran <a href="https://twitter.com/ranjianghao" target="_blank"><i class="fa fa-twitter fa-fw"></i></a> <a href="https://plus.google.com/115089198820028999295" target="_blank"><i class="fa fa-google-plus fa-fw"></i></a>　|　<a href="http://kunr.me/" target="_blank">Kunr</a> Canvas　|　<a href="https://gitcafe.com" target="_blank">GitCafe Pages</a></li>
+    </ul>
+  </div>
+  <canvas id="canvas" width="1364" height="366">NOT SUPPORT CANVAS</canvas>
+  <script type="text/javascript">
+    var canvas = document.getElementById('canvas');
+    var cxt = canvas.getContext('2d');
+
+    function Dot() {
+      this.alive = true;
+      this.x = Math.round(Math.random() * canvas.width);
+      this.y = Math.round(Math.random() * canvas.height);
+      this.diameter = Math.random() * 10.8;
+
+      this.ColorData = {
+        Red: Math.round(Math.random() * 255),
+        Green: Math.round(Math.random() * 255),
+        Blue: Math.round(Math.random() * 255)
+      };
+
+      this.alpha = 0.1;
+      this.color = 'rgba(' + this.ColorData.Red + ', ' + this.ColorData.Green + ',' + this.ColorData.Blue + ',' + this.alpha + ')';
+
+      this.velocity = {
+        x: Math.round(Math.random() < 0.5 ? -1 : 1) * Math.random() * 0.7,
+        y: Math.round(Math.random() < 0.5 ? -1 : 1) * Math.random() * 0.7
+      };
+    }
+
+    Dot.prototype = {
+      Draw: function() {
+        cxt.fillStyle = this.color;
+        cxt.beginPath();
+        cxt.arc(this.x, this.y, this.diameter, 0, Math.PI * 2, false);
+        cxt.fill();
+      },
+
+      Update: function() {
+        if(this.alpha < 0.8) {
+          this.alpha += 0.01;
+          this.color = 'rgba(' + this.ColorData.Red + ', ' + this.ColorData.Green + ',' + this.ColorData.Blue + ',' + this.alpha + ')';
+        }
+
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+
+        if(this.x > canvas.width + 5 || this.x < 0 - 5 || this.y > canvas.height + 5 || this.y < 0 - 5) {
+          this.alive = false;
+        }
+      }
+    };
+
+    var Event = {
+      rArray: [],
+      Init: function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        for (var x = 0; x < 150; x++) {
+          this.rArray.push(new Dot());
+        }
+        
+        this.Update();
+      },
+
+      Draw: function() {
+        cxt.clearRect(0, 0, canvas.width, canvas.height);
+        this.rArray.forEach(function(dot) {
+          dot.Draw();
+        });
+      },
+
+      Update: function() {
+        if (Event.rArray.length < 150) {
+          for (var x = Event.rArray.length; x < 150; x++) {
+            Event.rArray.push(new Dot());
+          }
+        }
+
+        Event.rArray.forEach(function(dot) {
+          dot.Update();
+        });
+
+        Event.rArray = Event.rArray.filter(function(dot) {
+          return dot.alive;
+        });
+
+        Event.Draw();
+
+        requestAnimationFrame(Event.Update);
+      }
+    };
+
+    window.onresize = function (){
+      Event.rArray = [];
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    Event.Init();
+  </script>
+
+</body></html>
